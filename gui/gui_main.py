@@ -5,7 +5,7 @@ import sys
 import json
 import os
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QTextEdit, QLineEdit, QPushButton, QLabel, QHBoxLayout, QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QLineEdit as QLineEditDialog, QFileDialog
+    QApplication, QWidget, QVBoxLayout, QTextBrowser, QLineEdit, QPushButton, QLabel, QHBoxLayout, QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QLineEdit as QLineEditDialog, QFileDialog
 )
 from PyQt5.QtCore import QUrl
 from commands.llm import get_llm_response
@@ -95,9 +95,8 @@ class JarvisGUI(QWidget):
         self.label = QLabel('Jarvis Conversation')
         layout.addWidget(self.label)
 
-        self.conversation = QTextEdit()
+        self.conversation = QTextBrowser()
         self.conversation.setReadOnly(True)
-        self.conversation.setOpenExternalLinks(False)
         self.conversation.anchorClicked.connect(self.handle_file_link)
         layout.addWidget(self.conversation)
 
