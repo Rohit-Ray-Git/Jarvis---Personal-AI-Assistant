@@ -3,6 +3,7 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QLineEdit, QPushButton, QLabel, QHBoxLayout
+from PyQt5.QtCore import QUrl
 from commands.llm import get_llm_response
 from voice.tts import speak_text
 from voice.stt import listen_and_transcribe
@@ -29,6 +30,8 @@ class JarvisGUI(QWidget):
 
         self.conversation = QTextEdit()
         self.conversation.setReadOnly(True)
+        self.conversation.setOpenExternalLinks(False)
+        self.conversation.anchorClicked.connect(self.handle_file_link)
         layout.addWidget(self.conversation)
 
         input_layout = QHBoxLayout()
@@ -64,11 +67,9 @@ class JarvisGUI(QWidget):
                 query = file_search_match.group(3).strip()
                 results = search_files(query)
                 if results:
-                    response = f"Found {len(results)} file(s):\n" + '\n'.join(results)
+                    links = '\n'.join([f'<a href="file:///{path}">{path}</a>' for path in results])
+                    response = f"Found {len(results)} file(s):<br>{links}"
                     speak_text(f"Found {len(results)} file{'s' if len(results) > 1 else ''}.")
-                    # Optionally, open the first file or its folder
-                    # Uncomment below to auto-open the first file:
-                    # os.startfile(results[0])
                 else:
                     response = f"No files found matching '{query}'."
                     speak_text(response)
@@ -104,6 +105,11 @@ class JarvisGUI(QWidget):
                 response = get_llm_response(user_text)
                 self.conversation.append(f'<b>Jarvis:</b> {response}')
                 speak_text(response)
+
+    def handle_file_link(self, url: QUrl):
+        path = url.toLocalFile()
+        if os.path.exists(path):
+            os.startfile(path)
 
     def handle_speak(self):
         def stt_thread():
