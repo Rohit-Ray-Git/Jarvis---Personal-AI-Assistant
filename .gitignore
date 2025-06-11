@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Vosk models
+models/
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp 

@@ -1,0 +1,13 @@
+PyQt5
+edge-tts
+vosk
+sounddevice
+openai
+requests
+beautifulsoup4
+pyautogui
+psutil
+pywin32
+customtkinter
+speechrecognition
+pyaudio 
