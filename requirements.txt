@@ -11,3 +11,4 @@ pywin32
 customtkinter
 speechrecognition
 pyaudio 
+python-dotenv

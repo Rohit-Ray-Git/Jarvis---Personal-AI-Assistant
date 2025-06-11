@@ -8,14 +8,15 @@ Entry point for Jarvis AI Assistant
 # from voice import VoiceAssistant
 # from commands import CommandHandler
 
+import sys
+from gui.gui_main import JarvisGUI
+from PyQt5.QtWidgets import QApplication
+
 def main():
-    # Initialize GUI (PyQt5 or customtkinter)
-    # Initialize Voice Assistant (Edge-TTS, Vosk)
-    # Initialize Command Handler (system, web, LLM, etc.)
-    # Start main event loop
-    print("[Jarvis] Starting up...")
-    # TODO: Launch GUI and voice/text input loop
-    pass
+    app = QApplication(sys.argv)
+    window = JarvisGUI()
+    window.show()
+    sys.exit(app.exec_())
 
 if __name__ == "__main__":
     main() 
