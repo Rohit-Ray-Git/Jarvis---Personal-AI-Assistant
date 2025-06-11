@@ -7,9 +7,9 @@ import os
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QTextBrowser, QLineEdit, QPushButton, QLabel, QHBoxLayout, QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QLineEdit as QLineEditDialog, QFileDialog
 )
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, QTimer
 from commands.llm import get_llm_response
-from voice.tts import speak_text
+from voice.tts import speak_text, stop_speech, clean_markdown_for_tts
 from voice.stt import listen_and_transcribe
 from commands.system import open_chrome, shutdown, open_folder, open_default_browser, open_application
 from commands.web import search_and_summarize
@@ -17,6 +17,7 @@ from utils.file_search import search_files
 import threading
 import re
 import subprocess
+import markdown
 
 SETTINGS_FILE = 'settings.json'
 HISTORY_FILE = 'history.json'
@@ -83,6 +84,9 @@ class JarvisGUI(QWidget):
         self.is_dark = False
         self.settings = load_settings()
         self.history = load_history()
+        self.loading_timer = None
+        self.loading_msg_cursor = None
+        self.loading_dots = 1
         self.init_ui()
         self.load_conversation()
 
@@ -123,6 +127,9 @@ class JarvisGUI(QWidget):
         self.export_button = QPushButton('📄 Export')
         input_layout.addWidget(self.export_button)
 
+        self.stop_voice_button = QPushButton('⏹️ Stop Voice')
+        input_layout.addWidget(self.stop_voice_button)
+
         layout.addLayout(input_layout)
         self.setLayout(layout)
 
@@ -134,6 +141,7 @@ class JarvisGUI(QWidget):
         self.settings_button.clicked.connect(self.open_settings)
         self.clear_button.clicked.connect(self.clear_conversation)
         self.export_button.clicked.connect(self.export_conversation)
+        self.stop_voice_button.clicked.connect(self.handle_stop_voice)
 
         self.apply_theme()
 
@@ -148,6 +156,37 @@ class JarvisGUI(QWidget):
     def toggle_theme(self):
         self.is_dark = not self.is_dark
         self.apply_theme()
+
+    def show_loading(self):
+        # Add loading message and keep cursor
+        self.loading_dots = 1
+        self.loading_msg_cursor = self.conversation.textCursor()
+        self.conversation.append('<b>Jarvis is typing<span id="dots">.</span></b>')
+        self.loading_timer = QTimer(self)
+        self.loading_timer.timeout.connect(self.animate_loading)
+        self.loading_timer.start(400)
+
+    def animate_loading(self):
+        self.loading_dots = (self.loading_dots % 3) + 1
+        # Move cursor to the end and select the last block
+        cursor = self.conversation.textCursor()
+        cursor.movePosition(cursor.End)
+        cursor.select(cursor.BlockUnderCursor)
+        text = f'<b>Jarvis is typing<span id="dots">{"." * self.loading_dots}</span></b>'
+        cursor.removeSelectedText()
+        cursor.insertHtml(text)
+        self.conversation.setTextCursor(cursor)
+
+    def remove_loading(self):
+        if self.loading_timer:
+            self.loading_timer.stop()
+            self.loading_timer = None
+        # Remove the last block (loading message)
+        cursor = self.conversation.textCursor()
+        cursor.movePosition(cursor.End)
+        cursor.select(cursor.BlockUnderCursor)
+        cursor.removeSelectedText()
+        self.conversation.setTextCursor(cursor)
 
     def handle_send(self):
         user_text = self.input_box.text().strip()
@@ -179,7 +218,7 @@ class JarvisGUI(QWidget):
                 # In-app web search and summarization
                 elif user_text_lower.startswith("search for "):
                     query = user_text[11:].strip()
-                    self.append_conversation(f'<i>Searching the web for: {query} ...</i>')
+                    self.show_loading()
                     def web_search_thread():
                         try:
                             result = search_and_summarize(query)
@@ -192,10 +231,12 @@ class JarvisGUI(QWidget):
                                 if r["snippet"]:
                                     html += f'<i>{r["snippet"]}</i><br>'
                                 html += '<hr>'
+                            self.remove_loading()
                             self.append_conversation(html)
                             if self.settings.get('voice', True):
                                 speak_text(summary[:400])
                         except Exception as e:
+                            self.remove_loading()
                             self.show_error(f"Web search error: {e}")
                     threading.Thread(target=web_search_thread, daemon=True).start()
                     return
@@ -239,26 +280,40 @@ class JarvisGUI(QWidget):
                         return
                 # Add more intents here as needed
                 if response:
-                    self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
+                    if user_text_lower.startswith("search for ") or (response and response.startswith('Here are')):
+                        self.append_conversation(f'**{self.settings.get("assistant_name", "Jarvis")}:**\n' + response, is_markdown=True)
+                    else:
+                        self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
                     if not file_search_match and self.settings.get('voice', True):
                         speak_text(response)
                 else:
                     # Fallback to LLM
-                    try:
-                        response = get_llm_response(user_text)
-                        self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
-                        if self.settings.get('voice', True):
-                            speak_text(response)
-                    except Exception as e:
-                        self.show_error(f"LLM error: {e}")
-                        return
+                    self.show_loading()
+                    def llm_thread():
+                        try:
+                            response = get_llm_response(user_text)
+                            self.remove_loading()
+                            self.append_conversation(response, is_markdown=True)
+                            if self.settings.get('voice', True):
+                                speak_text(response)
+                            self.save_conversation()
+                        except Exception as e:
+                            self.remove_loading()
+                            self.show_error(f"LLM error: {e}")
+                    threading.Thread(target=llm_thread, daemon=True).start()
                 self.save_conversation()
             except Exception as e:
+                self.remove_loading()
                 self.show_error(f"Unexpected error: {e}")
 
-    def append_conversation(self, text):
-        self.conversation.append(text)
-        self.history.append(text)
+    def append_conversation(self, text, is_markdown=False):
+        if is_markdown:
+            html = markdown.markdown(text, extensions=['extra'])
+            self.conversation.append(html)
+            self.history.append(html)
+        else:
+            self.conversation.append(text)
+            self.history.append(text)
 
     def save_conversation(self):
         save_history(self.history)
@@ -305,6 +360,9 @@ class JarvisGUI(QWidget):
 
     def show_error(self, message):
         self.append_conversation(f'<span style="color:#c00;"><i>⚠️ {message}</i></span>')
+
+    def handle_stop_voice(self):
+        stop_speech()
 
 # For standalone testing
 if __name__ == '__main__':

@@ -12,3 +12,4 @@ customtkinter
 speechrecognition
 pyaudio 
 python-dotenv
+markdown
