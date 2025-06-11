@@ -8,7 +8,7 @@ import subprocess
 import webbrowser
 
 # Configuration
-API_KEY = "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"  # Replace with your own
+API_KEY = "Replace with your own"  # Replace with your own
 API_URL = "https://openrouter.ai/api/v1/chat/com..."
 
 HEADERS = {
