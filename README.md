@@ -1,32 +1,89 @@
-# Jarvis: Your Personal AI Assistant
+# 🤖 Jarvis: Your Personal AI Assistant
 
-A modern, extensible personal assistant for Windows, inspired by Iron Man's Jarvis. Supports both voice and text interfaces, beautiful neural voices, offline speech recognition, system control, web search, and more.
+A modern, extensible, and beautiful personal assistant for Windows, inspired by Iron Man's Jarvis. Supports both voice and text interfaces, neural voices, offline speech recognition, system control, web search, file search, and more—all in a chat-like, themeable GUI.
 
-## Features
-- Voice and text input
-- Beautiful neural voice output (Edge-TTS)
-- Offline speech recognition (Vosk)
-- Modern GUI (PyQt5/customtkinter)
-- System control (open apps, search files, etc.)
-- Web search and scraping
-- LLM integration (OpenAI or local models)
-- Extensible command/plugin system
+---
 
-## Setup
-1. Clone the repository
-2. Install dependencies:
+## ✨ Features
+
+- 💬 **Voice & Text Input**: Talk or type to Jarvis
+- 🗣️ **Natural Voice Output**: Beautiful TTS (pyttsx3, Edge-TTS optional)
+- 🎨 **Modern GUI**: Light/dark themes, chat bubbles, settings, and more
+- 🗂️ **File Search**: Find and open files anywhere on your PC (with clickable results)
+- 🌐 **In-App Web Search**: Real-time web search & summarization, clickable links
+- 🖥️ **System Control**: Open any app, folder, or browser
+- 📝 **Conversation History**: Auto-save/load, clear, and export chat
+- ⚙️ **Settings Dialog**: Voice toggle, user/assistant names, theme
+- 🛑 **Stop Voice Button**: Instantly stop TTS output
+- 🚦 **Robust Error Handling**: Friendly feedback for all actions
+
+---
+
+## 🚀 Quick Start
+
+1. **Clone the repository**
+2. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
-3. Download Vosk model (see [Vosk models](https://alphacephei.com/vosk/models)) and place in `models/` directory.
-4. Run the assistant:
+3. **Download a Vosk model** ([see here](https://alphacephei.com/vosk/models)) and place it in the `models/` directory. Update `config.py` if needed.
+4. **Set up your `.env` file** in the project root:
+   ```env
+   OPENROUTER_API_KEY=your_openrouter_api_key_here
+   OPENROUTER_API_URL=https://openrouter.ai/api/v1/chat/completions
+   ```
+5. **Run the assistant**:
    ```bash
    python main.py
    ```
 
-## Configuration
-- Place your API keys (if needed) in a `.env` file or as environment variables.
-- Edit `config.py` for custom settings.
+---
 
-## License
+## 🖥️ Usage
+
+- **Type or speak** your query in the chat window.
+- **See your message instantly**; Jarvis will show a "typing..." indicator while processing.
+- **Click links** in web/file results to open them.
+- **Switch themes** with the 🌙/☀️ button.
+- **Open settings** (⚙️) to change names or toggle voice.
+- **Clear** (🗑️) or **export** (📄) your conversation.
+- **Stop voice** output anytime with ⏹️.
+
+---
+
+## 🛠️ Configuration
+
+- **API Keys**: Place your OpenRouter API key in `.env`.
+- **Vosk Model**: Download and set the path in `config.py`.
+- **Settings**: User/assistant names, theme, and voice toggle are saved in `settings.json`.
+
+---
+
+## 🧩 Extending Jarvis
+
+- Add new commands in `commands/` or utilities in `utils/`.
+- Improve intent detection in `gui/gui_main.py`.
+- Add plugins for reminders, calendar, smart home, etc.
+
+---
+
+## 📝 Example Queries
+
+- `search for latest AI news`
+- `find file resume`
+- `open notepad`
+- `open browser`
+- `locate document budget`
+- `shutdown`
+
+---
+
+## 🧑‍💻 Contributing
+
+Pull requests and suggestions are welcome! Please open an issue to discuss major changes.
+
+---
+
+## 📄 License
+
 MIT 
