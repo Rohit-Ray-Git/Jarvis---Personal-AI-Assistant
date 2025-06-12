@@ -7,7 +7,7 @@ import os
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QTextBrowser, QLineEdit, QPushButton, QLabel, QHBoxLayout, QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QLineEdit as QLineEditDialog, QFileDialog
 )
-from PyQt5.QtCore import QUrl, QTimer
+from PyQt5.QtCore import QUrl, QTimer, Qt
 from commands.llm import get_llm_response
 from voice.tts import speak_text, stop_speech, clean_markdown_for_tts
 from voice.stt import listen_and_transcribe
@@ -29,8 +29,8 @@ QPushButton { background-color: #e0e0e0; color: #222; border-radius: 5px; paddin
 QPushButton:hover { background-color: #d0d0d0; }
 """
 DARK_THEME = """
-QWidget { background-color: #232629; color: #f5f5f5; }
-QTextEdit, QLineEdit { background-color: #2c2f34; color: #f5f5f5; }
+QWidget { background-color:rgb(0, 0, 0); color: #f5f5f5; }
+QTextEdit, QLineEdit { background-color:rgb(0, 0, 0); color: #f5f5f5; }
 QPushButton { background-color: #444; color: #f5f5f5; border-radius: 5px; padding: 5px; }
 QPushButton:hover { background-color: #555; }
 """
@@ -190,121 +190,137 @@ class JarvisGUI(QWidget):
 
     def handle_send(self):
         user_text = self.input_box.text().strip()
-        if user_text:
-            self.append_conversation(f'<b>{self.settings.get("user_name", "You")}:</b> {user_text}')
-            self.input_box.clear()
-            response = None
-            user_text_lower = user_text.lower()
+        if not user_text:
+            return
+        self.append_conversation(f'<b>{self.settings.get("user_name", "You")}:</b> {user_text}')
+        self.input_box.clear()
+        response = None
+        user_text_lower = user_text.lower()
 
-            try:
-                # File search intent
-                file_search_match = re.match(r"(find|search for|locate) (file|document|) ?(.+)", user_text_lower)
-                if file_search_match:
-                    query = file_search_match.group(3).strip()
+        try:
+            # Make file search intent more specific
+            file_search_match = re.match(r"(find|search for|locate) (file|document) (.+)", user_text_lower)
+            if file_search_match:
+                query = file_search_match.group(3).strip()
+                self.show_loading()
+                def file_search_thread():
                     try:
                         results = search_files(query)
                         if results:
                             links = '\n'.join([f'<a href="file:///{path}">{path}</a>' for path in results])
                             response = f"Found {len(results)} file(s):<br>{links}"
-                            if self.settings.get('voice', True):
-                                speak_text(f"Found {len(results)} file{'s' if len(results) > 1 else ''}.")
+                            def update_ui():
+                                self.remove_loading()
+                                self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
+                                if self.settings.get('voice', True):
+                                    speak_text(f"Found {len(results)} file{'s' if len(results) > 1 else ''}.")
+                                self.save_conversation()
+                            QTimer.singleShot(0, update_ui)
                         else:
                             response = f"No files found matching '{query}'."
-                            if self.settings.get('voice', True):
-                                speak_text(response)
+                            def update_ui():
+                                self.remove_loading()
+                                self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
+                                if self.settings.get('voice', True):
+                                    speak_text(response)
+                                self.save_conversation()
+                            QTimer.singleShot(0, update_ui)
                     except Exception as e:
-                        self.show_error(f"File search error: {e}")
-                        return
-                # In-app web search and summarization
-                elif user_text_lower.startswith("search for "):
-                    query = user_text[11:].strip()
-                    self.show_loading()
-                    def web_search_thread():
-                        try:
-                            result = search_and_summarize(query)
-                            summary = result['summary']
-                            results = result['results']
-                            html = f'<b>{self.settings.get("assistant_name", "Jarvis")} (Web):</b> {summary}<br><br>'
-                            for r in results:
-                                html += f'<b><a href="{r["url"]}">{r["title"]}</a></b><br>'
-                                html += f'<span style="color:#888">{r["url"]}</span><br>'
-                                if r["snippet"]:
-                                    html += f'<i>{r["snippet"]}</i><br>'
-                                html += '<hr>'
+                        QTimer.singleShot(0, lambda: (self.remove_loading(), self.show_error(f"File search error: {e}")))
+                threading.Thread(target=file_search_thread, daemon=True).start()
+                return
+            # In-app web search and summarization
+            elif user_text_lower.startswith("search for "):
+                query = user_text[11:].strip()
+                self.show_loading()
+                def web_search_thread():
+                    try:
+                        result = search_and_summarize(query)
+                        summary = result['summary']
+                        results = result['results']
+                        html = f'<b>{self.settings.get("assistant_name", "Jarvis")} (Web):</b> {summary}<br><br>'
+                        for r in results:
+                            html += f'<b><a href="{r["url"]}">{r["title"]}</a></b><br>'
+                            html += f'<span style="color:#888">{r["url"]}</span><br>'
+                            if r["snippet"]:
+                                html += f'<i>{r["snippet"]}</i><br>'
+                            html += '<hr>'
+                        def update_ui():
                             self.remove_loading()
                             self.append_conversation(html)
                             if self.settings.get('voice', True):
                                 speak_text(summary[:400])
-                        except Exception as e:
-                            self.remove_loading()
-                            self.show_error(f"Web search error: {e}")
-                    threading.Thread(target=web_search_thread, daemon=True).start()
+                        QTimer.singleShot(0, update_ui)
+                    except Exception as e:
+                        QTimer.singleShot(0, lambda: (self.remove_loading(), self.show_error(f"Web search error: {e}")))
+                threading.Thread(target=web_search_thread, daemon=True).start()
+                return
+            # Open default browser for web tasks
+            elif re.match(r"^(open|launch) browser$", user_text_lower):
+                try:
+                    response = open_default_browser()
+                except Exception as e:
+                    self.show_error(f"Browser error: {e}")
                     return
-                # Open default browser for web tasks
-                elif re.match(r"^(open|launch) browser$", user_text_lower):
-                    try:
-                        response = open_default_browser()
-                    except Exception as e:
-                        self.show_error(f"Browser error: {e}")
-                        return
-                elif re.match(r"^open https?://", user_text_lower):
-                    try:
-                        url = user_text.split(" ", 1)[1].strip()
-                        response = open_default_browser(url)
-                    except Exception as e:
-                        self.show_error(f"Browser error: {e}")
-                        return
-                elif re.match(r"^open folder ", user_text_lower):
-                    try:
-                        folder = user_text_lower.replace("open folder", "").strip()
-                        response = open_folder(folder)
-                    except Exception as e:
-                        self.show_error(f"Open folder error: {e}")
-                        return
-                elif user_text_lower.startswith("open "):
-                    app_name = user_text_lower.replace("open ", "").strip()
-                    try:
-                        # If it looks like a URL, open in browser
-                        if app_name.startswith("http://") or app_name.startswith("https://"):
-                            response = open_default_browser(app_name)
-                        else:
-                            response = open_application(app_name)
-                    except Exception as e:
-                        self.show_error(f"Open application error: {e}")
-                        return
-                elif "shutdown" in user_text_lower:
-                    try:
-                        response = shutdown()
-                    except Exception as e:
-                        self.show_error(f"Shutdown error: {e}")
-                        return
-                # Add more intents here as needed
-                if response:
-                    if user_text_lower.startswith("search for ") or (response and response.startswith('Here are')):
-                        self.append_conversation(f'**{self.settings.get("assistant_name", "Jarvis")}:**\n' + response, is_markdown=True)
+            elif re.match(r"^open https?://", user_text_lower):
+                try:
+                    url = user_text.split(" ", 1)[1].strip()
+                    response = open_default_browser(url)
+                except Exception as e:
+                    self.show_error(f"Browser error: {e}")
+                    return
+            elif re.match(r"^open folder ", user_text_lower):
+                try:
+                    folder = user_text_lower.replace("open folder", "").strip()
+                    response = open_folder(folder)
+                except Exception as e:
+                    self.show_error(f"Open folder error: {e}")
+                    return
+            elif user_text_lower.startswith("open "):
+                app_name = user_text_lower.replace("open ", "").strip()
+                try:
+                    # If it looks like a URL, open in browser
+                    if app_name.startswith("http://") or app_name.startswith("https://"):
+                        response = open_default_browser(app_name)
                     else:
-                        self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
-                    if not file_search_match and self.settings.get('voice', True):
-                        speak_text(response)
+                        response = open_application(app_name)
+                except Exception as e:
+                    self.show_error(f"Open application error: {e}")
+                    return
+            elif "shutdown" in user_text_lower:
+                try:
+                    response = shutdown()
+                except Exception as e:
+                    self.show_error(f"Shutdown error: {e}")
+                    return
+            # Add more intents here as needed
+            if response:
+                if user_text_lower.startswith("search for ") or (response and response.startswith('Here are')):
+                    self.append_conversation(f'**{self.settings.get("assistant_name", "Jarvis")}:**\n' + response, is_markdown=True)
                 else:
-                    # Fallback to LLM
-                    self.show_loading()
-                    def llm_thread():
-                        try:
-                            response = get_llm_response(user_text)
+                    self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
+                if not file_search_match and self.settings.get('voice', True):
+                    speak_text(response)
+            else:
+                # Fallback to LLM
+                self.show_loading()
+                def llm_thread():
+                    try:
+                        response = get_llm_response(user_text)
+                        def update_ui():
                             self.remove_loading()
                             self.append_conversation(response, is_markdown=True)
                             if self.settings.get('voice', True):
                                 speak_text(response)
                             self.save_conversation()
-                        except Exception as e:
-                            self.remove_loading()
-                            self.show_error(f"LLM error: {e}")
-                    threading.Thread(target=llm_thread, daemon=True).start()
-                self.save_conversation()
-            except Exception as e:
-                self.remove_loading()
-                self.show_error(f"Unexpected error: {e}")
+                        QTimer.singleShot(0, update_ui)
+                    except Exception as e:
+                        QTimer.singleShot(0, lambda: (self.remove_loading(), self.show_error(f"LLM error: {e}")))
+                threading.Thread(target=llm_thread, daemon=True).start()
+            self.save_conversation()
+        except Exception as e:
+            self.remove_loading()
+            self.show_error(f"Unexpected error: {e}")
 
     def append_conversation(self, text, is_markdown=False):
         if is_markdown:
