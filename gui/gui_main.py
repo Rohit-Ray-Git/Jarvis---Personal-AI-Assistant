@@ -7,17 +7,18 @@ import os
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QTextBrowser, QLineEdit, QPushButton, QLabel, QHBoxLayout, QDialog, QFormLayout, QCheckBox, QDialogButtonBox, QLineEdit as QLineEditDialog, QFileDialog
 )
-from PyQt5.QtCore import QUrl, QTimer, Qt
+from PyQt5.QtCore import QUrl, QTimer, Qt, pyqtSignal
 from commands.llm import get_llm_response
 from voice.tts import speak_text, stop_speech, clean_markdown_for_tts
 from voice.stt import listen_and_transcribe
-from commands.system import open_chrome, shutdown, open_folder, open_default_browser, open_application
+from commands.system import shutdown, open_folder, open_default_browser, open_application
 from commands.web import search_and_summarize
 from utils.file_search import search_files
 import threading
 import re
 import subprocess
 import markdown
+import datetime
 
 SETTINGS_FILE = 'settings.json'
 HISTORY_FILE = 'history.json'
@@ -79,6 +80,10 @@ class SettingsDialog(QDialog):
         }
 
 class JarvisGUI(QWidget):
+    assistant_message_signal = pyqtSignal(str, bool)  # (message, is_markdown)
+    error_signal = pyqtSignal(str)
+    remove_loading_signal = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.is_dark = False
@@ -89,6 +94,10 @@ class JarvisGUI(QWidget):
         self.loading_dots = 1
         self.init_ui()
         self.load_conversation()
+        # Connect signals
+        self.assistant_message_signal.connect(self.append_conversation)
+        self.error_signal.connect(self.show_error)
+        self.remove_loading_signal.connect(self.remove_loading)
 
     def init_ui(self):
         self.setWindowTitle('Jarvis - Personal AI Assistant')
@@ -209,27 +218,24 @@ class JarvisGUI(QWidget):
                         if results:
                             links = '\n'.join([f'<a href="file:///{path}">{path}</a>' for path in results])
                             response = f"Found {len(results)} file(s):<br>{links}"
-                            def update_ui():
-                                self.remove_loading()
-                                self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
-                                if self.settings.get('voice', True):
-                                    speak_text(f"Found {len(results)} file{'s' if len(results) > 1 else ''}.")
-                                self.save_conversation()
-                            QTimer.singleShot(0, update_ui)
+                            self.remove_loading_signal.emit()
+                            self.assistant_message_signal.emit(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}', False)
+                            if self.settings.get('voice', True):
+                                speak_text(f"Found {len(results)} file{'s' if len(results) > 1 else ''}.")
+                            self.save_conversation()
                         else:
                             response = f"No files found matching '{query}'."
-                            def update_ui():
-                                self.remove_loading()
-                                self.append_conversation(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}')
-                                if self.settings.get('voice', True):
-                                    speak_text(response)
-                                self.save_conversation()
-                            QTimer.singleShot(0, update_ui)
+                            self.remove_loading_signal.emit()
+                            self.assistant_message_signal.emit(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}', False)
+                            if self.settings.get('voice', True):
+                                speak_text(response)
+                            self.save_conversation()
                     except Exception as e:
-                        QTimer.singleShot(0, lambda: (self.remove_loading(), self.show_error(f"File search error: {e}")))
+                        self.remove_loading_signal.emit()
+                        self.error_signal.emit(f"File search error: {e}")
                 threading.Thread(target=file_search_thread, daemon=True).start()
                 return
-            # In-app web search and summarization
+            # In-app web search and summarization (explicit)
             elif user_text_lower.startswith("search for "):
                 query = user_text[11:].strip()
                 self.show_loading()
@@ -245,14 +251,37 @@ class JarvisGUI(QWidget):
                             if r["snippet"]:
                                 html += f'<i>{r["snippet"]}</i><br>'
                             html += '<hr>'
-                        def update_ui():
-                            self.remove_loading()
-                            self.append_conversation(html)
-                            if self.settings.get('voice', True):
-                                speak_text(summary[:400])
-                        QTimer.singleShot(0, update_ui)
+                        self.remove_loading_signal.emit()
+                        self.assistant_message_signal.emit(html, False)
+                        if self.settings.get('voice', True):
+                            speak_text(summary[:400])
                     except Exception as e:
-                        QTimer.singleShot(0, lambda: (self.remove_loading(), self.show_error(f"Web search error: {e}")))
+                        self.remove_loading_signal.emit()
+                        self.error_signal.emit(f"Web search error: {e}")
+                threading.Thread(target=web_search_thread, daemon=True).start()
+                return
+            # Automatic news/current event detection
+            elif is_news_query(user_text):
+                self.show_loading()
+                def web_search_thread():
+                    try:
+                        result = search_and_summarize(user_text)
+                        summary = result['summary']
+                        results = result['results']
+                        html = f'<b>{self.settings.get("assistant_name", "Jarvis")} (Web):</b> {summary}<br><br>'
+                        for r in results:
+                            html += f'<b><a href="{r["url"]}">{r["title"]}</a></b><br>'
+                            html += f'<span style="color:#888">{r["url"]}</span><br>'
+                            if r["snippet"]:
+                                html += f'<i>{r["snippet"]}</i><br>'
+                            html += '<hr>'
+                        self.remove_loading_signal.emit()
+                        self.assistant_message_signal.emit(html, False)
+                        if self.settings.get('voice', True):
+                            speak_text(summary[:400])
+                    except Exception as e:
+                        self.remove_loading_signal.emit()
+                        self.error_signal.emit(f"Web search error: {e}")
                 threading.Thread(target=web_search_thread, daemon=True).start()
                 return
             # Open default browser for web tasks
@@ -306,16 +335,21 @@ class JarvisGUI(QWidget):
                 self.show_loading()
                 def llm_thread():
                     try:
+                        print('[DEBUG] Sending to LLM:', user_text)
                         response = get_llm_response(user_text)
-                        def update_ui():
-                            self.remove_loading()
-                            self.append_conversation(response, is_markdown=True)
+                        print('[DEBUG] LLM response:', response)
+                        self.remove_loading_signal.emit()
+                        if not response or not response.strip():
+                            self.error_signal.emit('No response from LLM.')
+                        else:
+                            self.assistant_message_signal.emit(response, True)
                             if self.settings.get('voice', True):
                                 speak_text(response)
                             self.save_conversation()
-                        QTimer.singleShot(0, update_ui)
                     except Exception as e:
-                        QTimer.singleShot(0, lambda: (self.remove_loading(), self.show_error(f"LLM error: {e}")))
+                        self.remove_loading_signal.emit()
+                        print('[DEBUG] LLM exception:', e)
+                        self.error_signal.emit(f"LLM error: {e}")
                 threading.Thread(target=llm_thread, daemon=True).start()
             self.save_conversation()
         except Exception as e:
@@ -379,6 +413,22 @@ class JarvisGUI(QWidget):
 
     def handle_stop_voice(self):
         stop_speech()
+
+def is_news_query(text):
+    keywords = [
+        "news", "today", "latest", "current", "update", "updates", "recent", "now", "headline", "happening", "breaking", "event", "events"
+    ]
+    text_lower = text.lower()
+    # If the query contains a date (today, yesterday, this week, etc.) or news-related keywords
+    if any(word in text_lower for word in keywords):
+        return True
+    # If the query contains a date string (e.g., 2024, month names)
+    months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+    if any(month in text_lower for month in months):
+        return True
+    if any(str(year) in text_lower for year in range(2020, datetime.datetime.now().year + 1)):
+        return True
+    return False
 
 # For standalone testing
 if __name__ == '__main__':

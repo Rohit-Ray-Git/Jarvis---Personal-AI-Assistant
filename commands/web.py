@@ -1,23 +1,30 @@
 # web.py
 # Placeholder for web search and scraping commands 
 
+import os
 import requests
-from bs4 import BeautifulSoup
 from commands.llm import get_llm_response
 
+try:
+    from tavily import TavilyClient
+except ImportError:
+    TavilyClient = None
+
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
+
 def search_and_summarize(query, num_results=5):
-    url = f'https://html.duckduckgo.com/html/?q={requests.utils.quote(query)}'
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    if not TavilyClient or not TAVILY_API_KEY:
+        return {'summary': "Tavily API not configured. Please install tavily-python and set TAVILY_API_KEY in your .env.", 'results': []}
     try:
-        resp = requests.get(url, headers=headers, timeout=10)
-        soup = BeautifulSoup(resp.text, 'html.parser')
+        client = TavilyClient(api_key=TAVILY_API_KEY)
+        tavily_results = client.search(query, max_results=num_results)
         results = []
-        for a in soup.select('.result__a', limit=num_results):
-            title = a.get_text()
-            href = a['href']
-            snippet_tag = a.find_parent('div', class_='result').find('a', class_='result__snippet')
-            snippet = snippet_tag.get_text() if snippet_tag else ''
-            results.append({'title': title, 'url': href, 'snippet': snippet})
+        for r in tavily_results.get("results", []):
+            results.append({
+                'title': r.get('title', ''),
+                'url': r.get('url', ''),
+                'snippet': r.get('content', '')
+            })
         if not results:
             return {'summary': "No web results found.", 'results': []}
         # Summarize using LLM if available
@@ -25,6 +32,14 @@ def search_and_summarize(query, num_results=5):
         for r in results:
             summary_prompt += f"Title: {r['title']}\nURL: {r['url']}\nSnippet: {r['snippet']}\n\n"
         summary = get_llm_response(summary_prompt)
-        return {'summary': summary, 'results': results}
+        # Format as markdown
+        md = f"**Web Summary:**\n\n{summary}\n\n---\n"
+        for r in results:
+            md += f"- [{r['title']}]({r['url']})  "
+            md += f"<br><span style='color:gray'>{r['url']}</span>  "
+            if r['snippet']:
+                md += f"<br><i>{r['snippet']}</i>"
+            md += "\n\n"
+        return {'summary': md, 'results': results}
     except Exception as e:
         return {'summary': f"Web search failed: {e}", 'results': []} 
