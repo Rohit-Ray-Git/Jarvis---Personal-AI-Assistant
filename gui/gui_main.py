@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QUrl, QTimer, Qt, pyqtSignal
 from commands.llm import get_llm_response
-from voice.tts import speak_text, stop_speech, clean_markdown_for_tts
+from voice.tts import speak_text, stop_speech, clean_markdown_for_tts, pause_speech, resume_speech
 from voice.stt import listen_and_transcribe
 from commands.system import shutdown, open_folder, open_default_browser, open_application
 from commands.web import search_and_summarize
@@ -139,6 +139,12 @@ class JarvisGUI(QWidget):
         self.stop_voice_button = QPushButton('⏹️ Stop Voice')
         input_layout.addWidget(self.stop_voice_button)
 
+        self.pause_voice_button = QPushButton('⏸️ Pause Voice')
+        input_layout.addWidget(self.pause_voice_button)
+
+        self.resume_voice_button = QPushButton('▶️ Resume Voice')
+        input_layout.addWidget(self.resume_voice_button)
+
         layout.addLayout(input_layout)
         self.setLayout(layout)
 
@@ -151,6 +157,8 @@ class JarvisGUI(QWidget):
         self.clear_button.clicked.connect(self.clear_conversation)
         self.export_button.clicked.connect(self.export_conversation)
         self.stop_voice_button.clicked.connect(self.handle_stop_voice)
+        self.pause_voice_button.clicked.connect(self.handle_pause_voice)
+        self.resume_voice_button.clicked.connect(self.handle_resume_voice)
 
         self.apply_theme()
 
@@ -413,6 +421,12 @@ class JarvisGUI(QWidget):
 
     def handle_stop_voice(self):
         stop_speech()
+
+    def handle_pause_voice(self):
+        pause_speech()
+
+    def handle_resume_voice(self):
+        resume_speech()
 
 def is_news_query(text):
     keywords = [

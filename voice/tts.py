@@ -3,16 +3,53 @@
 
 import pyttsx3
 import re
+import threading
+import time
 
 engine = pyttsx3.init()
 engine.setProperty('rate', 180)  # Adjust speaking rate if desired
 
+# Global state for pause/resume
+_speech_state = {
+    'chunks': [],
+    'index': 0,
+    'paused': False,
+    'stopped': False,
+    'thread': None
+}
+
 def speak_text(text):
+    stop_speech()  # Stop any ongoing speech
     cleaned = clean_markdown_for_tts(text)
-    engine.say(cleaned)
-    engine.runAndWait()
+    # Split into sentences/chunks
+    chunks = re.split(r'(?<=[.!?]) +', cleaned)
+    _speech_state['chunks'] = chunks
+    _speech_state['index'] = 0
+    _speech_state['paused'] = False
+    _speech_state['stopped'] = False
+    def run():
+        while _speech_state['index'] < len(_speech_state['chunks']):
+            if _speech_state['stopped']:
+                break
+            if _speech_state['paused']:
+                time.sleep(0.1)
+                continue
+            chunk = _speech_state['chunks'][_speech_state['index']]
+            engine.say(chunk)
+            engine.runAndWait()
+            _speech_state['index'] += 1
+    t = threading.Thread(target=run, daemon=True)
+    _speech_state['thread'] = t
+    t.start()
+
+def pause_speech():
+    _speech_state['paused'] = True
+
+def resume_speech():
+    _speech_state['paused'] = False
 
 def stop_speech():
+    _speech_state['stopped'] = True
     engine.stop()
 
 def clean_markdown_for_tts(text):

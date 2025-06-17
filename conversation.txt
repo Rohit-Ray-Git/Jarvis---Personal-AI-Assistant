@@ -1,51 +1,187 @@
-User: hi
-Hello! 👋 How can I assist you today?
-User: find me some good stocks to invest
-Investing in stocks requires careful research and consideration of your personal financial goals, risk tolerance, and time horizon. I am not a financial advisor, but I can guide you on how to find promising stocks and highlight some sectors with potential. Always consult a professional before investing.
-🔍 Key Steps to Pick Stocks:
+User: What's the latest news in AI?
+Jarvis (Web): Here’s a summary of the latest updates and resources on artificial intelligence (AI), based on the articles from the search results:
 
-Research Fundamentals: Look for companies with:
-Strong financial health (low debt, positive cash flow).
-Consistent revenue/profit growth.
-Competitive advantages (e.g., unique tech, brand loyalty).
+1. **NBC News**: Covers trending developments in AI, focusing on popular AI chatbots like ChatGPT (Microsoft), Apple's AI chatbot, and Google’s Bard.
 
-Competent management teams.
+2. **Reuters**: Explores large-scale AI partnerships, such as Meta's $14.8 billion deal with Scale AI, and industry dynamics like Google reconsidering its ties with Scale AI following the Meta agreement.
+
+3. **ScienceDaily**: Focuses on a broad scope of AI news, including advancements in robotics, AI-powered models simulating human intelligence, and futuristic technologies.
+
+4. **TechCrunch**: Delves into machine learning and generative AI, featuring the companies advancing the field and the ethical controversies surrounding AI development.
+
+5. **MIT News**: Highlights research efforts like enhancing AI language models through collaborative initiatives (e.g., the MIT-IBM Watson AI Lab) to tackle tasks like complex reasoning and personalization.
+
+In summary, current AI headlines span advancements in chatbot technology, industry partnerships, experimental AI applications, and critical discussions around ethics and practical deployment.Artificial intelligence news: Chat AI, ChatGPT, AI generator, AI ...https://www.nbcnews.com/artificial-intelligenceThe latest news and top stories on artificial intelligence, including AI chatbots like Microsoft's ChatGPT, Apple's AI Chatbot and Google's Bard.AI News | Latest Headlines and Developments | Reutershttps://www.reuters.com/technology/artificial-intelligence/Meta's $14.8 billion Scale AI deal latest test of AI partnerships. June 13, 2025. Exclusive: Google, Scale AI's largest customer, plans split after Meta deal ... Reuters News Agency, opens new tabArtificial Intelligence News -- ScienceDailyhttps://www.sciencedaily.com/news/computers_math/artificial_intelligence/Artificial Intelligence News. Everything on AI including futuristic robots with artificial intelligence, computer models of human intelligence and more.AI News & Artificial Intelligence | TechCrunchhttps://techcrunch.com/category/artificial-intelligence/News coverage on artificial intelligence and machine learning tech, the companies building them, and the ethical issues AI raises today. This encompasses generative AI, including large languageArtificial intelligence | MIT News | Massachusetts Institute of Technologyhttps://news.mit.edu/topic/artificial-intelligence2Displaying 1 - 15 of 1375 news articles related to this topic. Show: News Articles. In the Media. Audio. Bringing meaning into technology deployment ... Inroads to personalized AI trip planning. A new framework from the MIT-IBM Watson AI Lab supercharges language models, so they can reason over, interactively develop, and verify valid, complex
+User: what do you think of the current situation between Israil and Iran?
+Jarvis (Web): The provided search results highlight the ongoing and escalating conflict between Israel and Iran. Key points include:
+
+1. **Escalation of Strikes**: Both nations have engaged in sustained military actions, with Israel targeting Iranian infrastructure, including a hospital and state TV building, while Iran retaliated with attacks on Israeli cities like Haifa and Tel Aviv (Al Jazeera, NBC News).
+
+2. **Focus on Iran's Nuclear Program**: Israel's military campaign purportedly aims to counter what it perceives as an existential threat from Iran's nuclear and missile advancements (NBC News).
+
+3. **International Involvement and Reactions**: Former U.S. President Donald Trump has called for Iran’s unconditional surrender. There is also mention of potential negotiations, endorsed in part by Russia, indicating broader geopolitical interests (WSJ, Atlantic Council).
+
+4. **Strategic Implications**: Analysts suggest the conflict could significantly impact Middle Eastern security dynamics. The long-term ramifications depend on the length and resolution of the war (PBS NewsHour, Atlantic Council).
+
+Overall, the situation reflects deepening hostilities with significant risks for regional and global security.Israel-Iran conflict | Israel-Iran conflict | Today's latest from Al ...https://www.aljazeera.com/tag/israel-iran-conflict/Israel, Iran trade deadly strikes for fourth day with no signs of restraint. Israel has attacked a hospital in Iran and a building of state TV; Iran has struck Israel's Haifa and Tel Aviv areas.Israel-Iran Live Updates: Trump Calls for Iran's 'Unconditional Surrender'https://www.wsj.com/livecoverage/israel-iran-conflict-newsThe conflict between Iran and Israel continues for a fifth day. President Trump says he might send JD Vance to negotiate with the Iranians. Follow along for live updates, news and analysis as theTwenty questions (and expert answers) on the Israel-Iran warhttps://www.atlanticcouncil.org/blogs/menasource/twenty-questions-and-expert-answers-on-the-israel-iran-war/If the Israel-Iran conflict ends quickly, though, these benefits may not last long. The recent phone call between Trump and Russian President Vladimir Putin, in which both called for an end to the Israel-Iran conflict, also furthers Putin's aim of increasing Russian cooperation with Washington despite the war in Ukraine continuing.Israel claims aerial superiority over Tehran as Iran ... - NBC Newshttps://www.nbcnews.com/world/middle-east/live-blog/israel-iran-live-updates-new-attacks-conflict-enters-fourth-day-rcna213182Israel says the aim of its military campaign is to eliminate Iran's nuclear and ballistic missile programs and the "existential threat" it would face if Iran were to successfully develop an atomicAnalysis: How Israel's strikes on Iran could change security in the ...https://www.pbs.org/newshour/world/analysis-how-israels-strikes-on-iran-could-change-security-in-the-middle-eastRelated. Trump vetoed an Israeli plan to kill Iran's supreme leader, U.S. official tells AP. By Aamer Madhani, Associated Press. Israel and Iran launch new round of strikes as deadly conflict
+User: What are all comprises of LLM
+LLM stands for Large Language Model, a type of AI model predominantly used in natural language processing tasks. LLMs are comprised of several components and characteristics that enable them to understand, generate, and process human language effectively. Here’s a breakdown of what LLMs are comprised of:
+
+1. Model Architecture
+The foundation for LLMs is the underlying architecture designed to process language. Common architectures include:
+- Transformer Networks: The backbone of most modern LLMs like GPT, BERT, and RoBERTa. Transformer networks use mechanisms like self-attention to process input sequences efficiently.
+- Layers of neural networks, such as:
+  - Feedforward layers
+  - Attention mechanisms
+  - Encoder and/or Decoder blocks (e.g., BERT uses only an encoder, GPT uses a decoder).
+
+2. Parameters
+LLMs are composed of billions of trainable parameters (weights and biases), which define their ability to learn patterns from data. The parameters grow in scale to improve performance:
+- For example:
+  - GPT-2: ~1.5 billion parameters
+  - GPT-3: ~175 billion parameters
+  - PaLM (Google): ~540 billion parameters
+These parameters are learned during the training process and determine how the model processes language.
+
+3. Pretraining Dataset
+LLMs are pretrained on massive datasets. These datasets typically include:
+- Text from diverse sources: Books, websites, news articles, academic papers, online forums (e.g., Reddit), social media, etc.
+- Multilingual content: For multilingual models.
+- Tokenized data: Raw text is converted into tokens, which are smaller units such as words or subwords, for model processing.
+
+4. Tokenization Mechanism
+Tokenization divides text into smaller units (tokens), which are converted into numerical representations for the model. Common tokenization techniques include:
+- Word-based tokenization: Splits text by words.
+- Subword tokenization: Splits text into smaller components (e.g., Byte-Pair Encoding, WordPiece).
+- Character-level tokenization: Splits text into individual symbols.
+
+5. Training Processes
+The training process of LLMs comprises:
+- Self-supervised Learning: The model learns from the raw text without labeled data, predicting masked or next tokens.
+- Fine-tuning: After general pretraining, fine-tuning adapts the model for specific applications, such as translation, summarization, or sentiment analysis.
+- Alignment/Instruction tuning: Techniques to align the model outputs with human preferences or provide responses better formatted for instruction-based use cases.
+
+6. Scalability and Hardware
+LLMs depend on large-scale computational infrastructure to train and run efficiently:
+- High-performance GPUs/TPUs: For parallel processing.
+- Distributed computing: Splitting tasks across multiple servers.
+- Memory optimization: Handling billions of parameters efficiently requires memory-efficient techniques.
+
+7. Inference Mechanisms
+Post-training, LLMs process user inputs through:
+- Prompting: Users provide text prompts to direct the model’s behavior.
+- Contextual learning: Models interpret user queries in context to generate coherent responses.
+
+8. Evaluation Metrics
+To determine their effectiveness, LLMs are evaluated using metrics like:
+- Perplexity: Measures how well the model predicts text.
+- BLEU/ROUGE scores: For language generation tasks like translation or summarization.
+- Human evaluations: To assess the quality of output text.
+
+9. Applications
+LLMs are applied in numerous domains, which comprise:
+- Chatbots and assistants (e.g., ChatGPT, Bard).
+- Content generation (e.g., articles, poetry, code).
+- Translation (e.g., multilingual models).
+- Sentiment analysis, question-answering, text summarization, etc.
+
+10. Ethical Considerations
+
+Bias and fairness: Ensuring the model outputs are unbiased.
+Data privacy: Handling sensitive user data appropriately.
+Misuse prevention: Avoiding harmful applications like misinformation generation.
 
 
-Analyze Sectors: Focus on growing industries like:
+Together, these elements comprise the workings of a large language model both on the technical and practical fronts.
+User: Explain about the MoE based architecture used in Deepseek
+DeepSeek is a specialized framework often utilized in genomics and bioinformatics for analyzing complex biological sequences, such as DNA, RNA, or protein data. While specific implementations and configurations vary, a core architectural element commonly used in DeepSeek (or similar solutions) is Mixture-of-Experts (MoE). This approach seeks to improve model performance by dynamically selecting sub-models or "experts" during inference or learning, rather than applying a rigid system across all data inputs.
+MoE-Based Architecture Overview
+The Mixture-of-Experts (MoE) architecture is a type of neural network design in which the model is composed of multiple independent "expert" subnetworks. These experts specialize in handling different parts or aspects of the input, and a gating mechanism determines which experts should contribute to processing a specific input sample. This architecture aims to optimize computational efficiency and adaptiveness, leveraging dynamic specialization.
+Here’s a breakdown of how MoE works in a DeepSeek context:
 
-Technology (AI, cloud computing, cybersecurity).
-Healthcare (biotech, aging populations).
-Green Energy (solar, EVs, battery tech).
+1. Expert Networks
 
-Infrastructure (renewables, 5G, construction).
+In MoE architectures, the "experts" are typically distinct neural subnetworks, each trained to focus on specific features or patterns in the genomic dataset.
+For instance, in DeepSeek's genomics application, certain experts might specialize in recognizing specific motifs or regions in DNA sequences, while others might focus on predicting regulatory functions.
 
 
-Use Screening Tools:
+2. Gating Mechanism
 
-Yahoo Finance
-Finviz
-Morningstar
-   Filter by metrics like P/E ratio, dividend yield, and growth rates.
+A gating network determines which experts are activated for a given input. It essentially assigns weights to each expert based on the input's features, effectively routing the input through the most relevant subset of experts.
+The gate outputs a sparse probability distribution, often activating only a few experts rather than all of them, which improves computational efficiency.
 
-🌱 Promising Areas in 2024:
 
-AI &amp; Semiconductors: Companies driving AI innovation (e.g., chipmakers, data centers).
-Renewables: Growth tied to global decarbonization goals.
-Consumer Staples: Resilient during economic downturns.
-Healthcare Innovation: Genomics, weight-loss drugs, and telemedicine.
+3. Sparse Activation
 
-⚠️ Critical Reminders:
+Unlike traditional dense models, MoE deliberately limits the number of active experts for a single input, which reduces computational overhead and enables scalability.
+In DeepSeek's context, sparse activation helps manage immense genomic datasets while extracting high-quality insights rapidly.
 
-Diversify: Don’t put all funds into one stock/sector.
-Think Long-Term: Avoid chasing short-term hype.
-Stay Informed: Track market news via Bloomberg or Reuters.
-Risk Management: Only invest what you can afford to lose.
 
-💡 Suggested First Steps:
+4. Training Framework
 
-Explore diversified ETFs (e.g., VOO for S&amp;P 500, QQQ for tech) to reduce risk.
-Consider fractional shares if starting small (e.g., via apps like Robinhood or Fidelity).
-Read annual reports (10-K filings on SEC EDGAR).
+Experts are trained collaboratively while maintaining individual specialization. Typically, techniques like weight sharing, specialized loss functions, or dropout can ensure efficient learning.
+The gating mechanism is also trained to learn optimal routing patterns for diverse genomic inputs.
 
-For personalized advice, use professional services like Fidelity or Vanguard, and always do your own due diligence. 📚
+
+Advantages in DeepSeek
+The MoE architecture offers several advantages for DeepSeek’s genomics-focused applications:
+
+Scalability: Easily accommodates large and diverse datasets typical of genomic research.
+Efficiency: Sparse activation reduces computational costs, allowing DeepSeek to process massive amounts of data with limited resources.
+Discriminative Power: By specializing individual experts, DeepSeek can better analyze nuanced biological patterns.
+Generalization: Expert networks improve generalization across different types of biological data, making DeepSeek versatile for various studies (e.g., epigenetics, transcriptomics).
+
+
+Practical Use in DeepSeek
+In practice, DeepSeek’s MoE-based architecture might involve several components:
+- Preprocessing genomic sequences into feature-rich data representations (e.g., one-hot encoding, embeddings for nucleotide sequences).
+- Applying MoE to selectively analyze regions of interest (e.g., identifying functional or anomalous mutations).
+- Outputting predictions (e.g., disease susceptibility, sequence functionality) based on specialized expert insights.
+DeepSeek’s application of MoE highlights how deep learning models can be tailored for domain-specific challenges like genomics, where high sensitivity and large-scale processing are paramount.
+User: Then which architecture is used by ChatGPT?
+ChatGPT is based on the Transformer architecture, which was introduced in the paper "Attention is All You Need" by Vaswani et al. in 2017. This architecture leverages self-attention mechanisms to efficiently process and understand sequences of text.
+Specifically, ChatGPT uses a variant of the Transformer architecture called the GPT (Generative Pre-trained Transformer) model. OpenAI developed GPT models, and ChatGPT is a product of the GPT family, such as GPT-3, GPT-3.5, or GPT-4 (depending on the version you're interacting with). Key characteristics of the GPT architecture include:
+
+
+Decoder-only Transformer: Unlike the full Transformer model (which has both an encoder and a decoder), GPT models use only the decoder part, optimized for generating text based on a given prompt.
+
+
+Pretraining and Fine-tuning: GPT models are pre-trained on large datasets using unsupervised learning to predict the next token in a sequence. Fine-tuning is then performed on task-specific or domain-specific datasets to adapt the model for particular use cases.
+
+
+Self-Attention Mechanism: This mechanism allows the model to focus on different parts of the input sequence dynamically, helping it understand the context of words and generate coherent responses.
+
+
+Autoregressive Language Modeling: GPT generates text token-by-token in an autoregressive fashion, meaning that each token is predicted based on previously generated tokens in the sequence.
+
+
+These design choices enable ChatGPT to excel at natural language understanding and generation tasks, such as conversational AI, question answering, and creative writing.
+User: search for the stock news in the US
+Jarvis (Web): **Web Summary:**
+
+Here’s a summary of the search results for "the stock news in the US":
+
+1. **CNBCTV18** reports that the U.S. stock market is trading lower, with Dow futures falling by 250 points despite speculation surrounding ceasefire talks between the U.S. and Iran. Market sentiment remains negative.
+
+2. **Stock Titan** provides real-time stock market updates with information on various individual stock performances, but the page lacks broader context regarding market trends.
+
+3. **Reuters** highlights important market headlines, including predictions that the U.S. Federal Reserve may not cut interest rates until the end of 2025, alongside coverage of financial and international factors affecting markets.
+
+4. **CNBC** covers U.S. stock market updates, business news, earnings, and broader financial analysis. It also provides resources for managing site preferences regarding targeted ads.
+
+5. **Yahoo Finance** indicates a mixed market performance, reporting that indices like the Dow, S&P 500, and Nasdaq are slightly drifting higher. Additionally, Chime’s recent IPO saw immediate strong stock performance debuting at $43 per share.
+
+Overall, the U.S. stock market currently shows mixed signals, with concerns over geopolitical issues like U.S.–Iran relations, interest rate expectations, and strong performances by individual stocks like Chime.
+
+---
+- [US Stock Market LIVE Updates: Dow Jones tanks 270 points on ... - CNBCTV18](https://www.cnbctv18.com/market/us-stock-market-live-dow-jones-snp-500-nasdaq-iran-israel-war-trump-deal-ceasefire-oil-gold-dollar-bill-liveblog-19622112.htm)  https://www.cnbctv18.com/market/us-stock-market-live-dow-jones-snp-500-nasdaq-iran-israel-war-trump-deal-ceasefire-oil-gold-dollar-bill-liveblog-19622112.htm  US Stock Market Live: Dow futures down 250 points; Trump says not reached out to Iran for talks HomeMarket NewsUS Stock Market Live: Dow futures down 250 points; Trump says not reached out to Iran for talks US Stock Market Live: Dow futures down 250 points; Trump says not reached out to Iran for talks US Stock Market Live: Futures on Wall Street continue to trade with losses despite unconfirmed reports of potential ceasefire talks between the US and Iran. Image 8: US Stock Market Live: Dow futures down 250 points; Trump says not reached out to Iran for talks **US Stock Market Live:** Futures on Wall Street continue to trade with losses despite unconfirmed reports of potential ceasefire talks between the US and Iran.
+
+- [Real-Time Stock Market News - US Stocks Live Feed](https://www.stocktitan.net/news/live.html)  https://www.stocktitan.net/news/live.html  Stock BLRX logo Stock EOG logo Stock AGEN logo Stock CERO logo Stock BLRX logo Stock EOG logo Stock AGEN logo Stock CERO logo BRKR Stock Logo WTGUU Stock Logo LOGC Stock Logo FATE Stock Logo NRO Stock Logo GS Stock Logo PGZ Stock Logo NYXH Stock Logo RVLCF Stock Logo NRPI Stock Logo BSII Stock Logo PDT Stock Logo HTD Stock Logo ASGI Stock Logo TSDRF Stock Logo NX Stock Logo PSTV Stock Logo CACI Stock Logo HAYW Stock Logo AKR Stock Logo FIHL Stock Logo CPT Stock Logo JENA Stock Logo ATH Stock Logo CRWD Stock Logo TFIN Stock Logo AWF Stock Logo IPM Stock Logo LI Stock Logo QYOUF Stock Logo ALEX Stock Logo FNMA Stock Logo
+
+- [U.S. Stock Market Headlines | Breaking Stock Market News | Reuters](https://www.reuters.com/markets/us/)  https://www.reuters.com/markets/us/  *   Markets  Browse Markets Source: LSEG, opens new tab - data delayed by at least 15 minutes Source: LSEG, opens new tab - data delayed by at least 15 minutes Markets Now *   Fed may not cut rates until end of 2025, says market strategist Image 8  *   Markets *   About Reuters, opens new tab *   Reuters News Agency, opens new tab *   Reuters and AI, opens new tab *   Reuters Leadership, opens new tab *   Reuters Diversity Report, opens new tab Reuters provides business, financial, national and international news to professionals via desktop terminals, the world's media organizations, industry events and directly to consumers. *   ### Data Catalogue, opens new tab *   ### World-Check, opens new tab *   Site Feedback, opens new tab
+
+- [US Top News and Analysis](https://www.cnbc.com/)  https://www.cnbc.com/  Stock Markets, Business News, Financials, Earnings - CNBC *   such as cookies and devices identifiers for the targeted ads and related purposes for this site/app on this browser/device: switch the “Allow Sale of My Personal Info or Sharing/Processing for Targeted Ads” toggle under Manage Preferences to OFF (grey color) by moving it LEFT and clicking “Confirm My Choice”. **Resident of the states listed in the ‘Your Rights’ section of NBCUniversal’s Privacy Policy Only:** To opt out of selling or sharing/processing for targeted advertising of information such as cookies and device identifiers processed for targeted ads (as defined by law) and related purposes for this site/app on this browser/device, switch this toggle to off (grey color) by moving it left and clicking **“Confirm My Choice”** below.
+
+- [Stock market today: Dow, S&P 500, Nasdaq drift higher, dollar slides ...](https://finance.yahoo.com/news/live/stock-market-today-dow-sp-500-nasdaq-drift-higher-dollar-slides-amid-renewed-tariff-threats-133109321.html)  https://finance.yahoo.com/news/live/stock-market-today-dow-sp-500-nasdaq-drift-higher-dollar-slides-amid-renewed-tariff-threats-133109321.html  Chime stock opened at $43 per share during the digital bank's public debut on the Nasdaq on Thursday. The stock soared roughly 50% in the minutes after the company began trading under the ticker
+
+US Stock Market LIVE Updates: Dow Jones tanks 270 points on ... - CNBCTV18https://www.cnbctv18.com/market/us-stock-market-live-dow-jones-snp-500-nasdaq-iran-israel-war-trump-deal-ceasefire-oil-gold-dollar-bill-liveblog-19622112.htmUS Stock Market Live: Dow futures down 250 points; Trump says not reached out to Iran for talks HomeMarket NewsUS Stock Market Live: Dow futures down 250 points; Trump says not reached out to Iran for talks US Stock Market Live: Dow futures down 250 points; Trump says not reached out to Iran for talks US Stock Market Live: Futures on Wall Street continue to trade with losses despite unconfirmed reports of potential ceasefire talks between the US and Iran. Image 8: US Stock Market Live: Dow futures down 250 points; Trump says not reached out to Iran for talks **US Stock Market Live:** Futures on Wall Street continue to trade with losses despite unconfirmed reports of potential ceasefire talks between the US and Iran.Real-Time Stock Market News - US Stocks Live Feedhttps://www.stocktitan.net/news/live.htmlStock BLRX logo Stock EOG logo Stock AGEN logo Stock CERO logo Stock BLRX logo Stock EOG logo Stock AGEN logo Stock CERO logo BRKR Stock Logo WTGUU Stock Logo LOGC Stock Logo FATE Stock Logo NRO Stock Logo GS Stock Logo PGZ Stock Logo NYXH Stock Logo RVLCF Stock Logo NRPI Stock Logo BSII Stock Logo PDT Stock Logo HTD Stock Logo ASGI Stock Logo TSDRF Stock Logo NX Stock Logo PSTV Stock Logo CACI Stock Logo HAYW Stock Logo AKR Stock Logo FIHL Stock Logo CPT Stock Logo JENA Stock Logo ATH Stock Logo CRWD Stock Logo TFIN Stock Logo AWF Stock Logo IPM Stock Logo LI Stock Logo QYOUF Stock Logo ALEX Stock Logo FNMA Stock LogoU.S. Stock Market Headlines | Breaking Stock Market News | Reutershttps://www.reuters.com/markets/us/*   Markets  Browse Markets Source: LSEG, opens new tab - data delayed by at least 15 minutes Source: LSEG, opens new tab - data delayed by at least 15 minutes Markets Now *   Fed may not cut rates until end of 2025, says market strategist Image 8  *   Markets *   About Reuters, opens new tab *   Reuters News Agency, opens new tab *   Reuters and AI, opens new tab *   Reuters Leadership, opens new tab *   Reuters Diversity Report, opens new tab Reuters provides business, financial, national and international news to professionals via desktop terminals, the world's media organizations, industry events and directly to consumers. *   ### Data Catalogue, opens new tab *   ### World-Check, opens new tab *   Site Feedback, opens new tabUS Top News and Analysishttps://www.cnbc.com/Stock Markets, Business News, Financials, Earnings - CNBC *   such as cookies and devices identifiers for the targeted ads and related purposes for this site/app on this browser/device: switch the “Allow Sale of My Personal Info or Sharing/Processing for Targeted Ads” toggle under Manage Preferences to OFF (grey color) by moving it LEFT and clicking “Confirm My Choice”. **Resident of the states listed in the ‘Your Rights’ section of NBCUniversal’s Privacy Policy Only:** To opt out of selling or sharing/processing for targeted advertising of information such as cookies and device identifiers processed for targeted ads (as defined by law) and related purposes for this site/app on this browser/device, switch this toggle to off (grey color) by moving it left and clicking **“Confirm My Choice”** below.Stock market today: Dow, S&P 500, Nasdaq drift higher, dollar slides ...https://finance.yahoo.com/news/live/stock-market-today-dow-sp-500-nasdaq-drift-higher-dollar-slides-amid-renewed-tariff-threats-133109321.htmlChime stock opened at $43 per share during the digital bank's public debut on the Nasdaq on Thursday. The stock soared roughly 50% in the minutes after the company began trading under the ticker
