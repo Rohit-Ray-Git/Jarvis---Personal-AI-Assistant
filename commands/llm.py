@@ -25,7 +25,25 @@ HEADERS_OPENROUTER = {
     "X-Title": "Jarvis Assistant"
 }
 
-def get_llm_response(user_text):
+def get_llm_response(user_text, history=None):
+    # Construct the message list with history if available
+    messages = []
+    messages.append({"role": "system", "content": f"You are {ASSISTANT_NAME}, a helpful AI assistant."})
+
+    if history:
+        # Simplified history processing: add last few exchanges
+        # A more sophisticated approach would be needed for token management
+        for entry in history[-4:]:  # Take last 4 entries
+            if entry.startswith(f'<b>You:</b>') or entry.startswith(f'<b>User:</b>'):
+                 # Simple parsing, might need adjustment based on exact format
+                content = entry.split('</b>', 1)[-1].strip()
+                messages.append({"role": "user", "content": content})
+            elif entry.startswith(f'<b>{ASSISTANT_NAME}:</b>'):
+                content = entry.split('</b>', 1)[-1].strip()
+                messages.append({"role": "assistant", "content": content})
+
+    messages.append({"role": "user", "content": user_text})
+
     # Prefer Azure OpenAI if configured
     if AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_KEY and AZURE_OPENAI_DEPLOYMENT:
         url = f"{AZURE_OPENAI_ENDPOINT}/openai/deployments/{AZURE_OPENAI_DEPLOYMENT}/chat/completions?api-version=2023-03-15-preview"
@@ -33,12 +51,7 @@ def get_llm_response(user_text):
             "api-key": AZURE_OPENAI_KEY,
             "Content-Type": "application/json"
         }
-        data = {
-            "messages": [
-                {"role": "system", "content": f"You are {ASSISTANT_NAME}, a helpful AI assistant."},
-                {"role": "user", "content": user_text}
-            ]
-        }
+        data = {"messages": messages}
         try:
             response = requests.post(url, headers=headers, json=data, timeout=30)
             response.raise_for_status()
@@ -48,11 +61,8 @@ def get_llm_response(user_text):
     # Fallback to OpenRouter
     elif OPENROUTER_API_KEY:
         data = {
-            "model": "openai/gpt-4o-2024-11-20",
-            "messages": [
-                {"role": "system", "content": f"You are {ASSISTANT_NAME}, a helpful AI assistant."},
-                {"role": "user", "content": user_text}
-            ]
+            "model": "openai/gpt-4o",
+            "messages": messages
         }
         try:
             response = requests.post(OPENROUTER_API_URL, headers=HEADERS_OPENROUTER, json=data, timeout=30)

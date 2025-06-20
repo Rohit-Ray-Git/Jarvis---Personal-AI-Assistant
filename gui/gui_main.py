@@ -24,16 +24,138 @@ SETTINGS_FILE = 'settings.json'
 HISTORY_FILE = 'history.json'
 
 LIGHT_THEME = """
-QWidget { background-color: #f5f5f5; color: #222; }
-QTextEdit, QLineEdit { background-color: #fff; color: #222; }
-QPushButton { background-color: #e0e0e0; color: #222; border-radius: 5px; padding: 5px; }
+QWidget { background-color: #f0f0f0; color: #333; }
+QTextBrowser, QLineEdit {
+    background-color: #ffffff;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+QPushButton {
+    background-color: #e0e0e0;
+    color: #333;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #c0c0c0;
+}
 QPushButton:hover { background-color: #d0d0d0; }
+QTextBrowser {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #0055a4; /* A nice blue */
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+p {
+    margin-bottom: 0.5em;
+    line-height: 1.5;
+}
+ul, ol {
+    margin-left: 1.5em;
+    margin-bottom: 0.5em;
+}
+li {
+    margin-bottom: 0.2em;
+}
+code {
+    background-color: #e8e8e8;
+    color: #d63369; /* A nice pink/red */
+    font-family: 'Courier New', Courier, monospace;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+pre {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap; /* Allows text to wrap */
+}
+pre code {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+blockquote {
+    border-left: 3px solid #0055a4;
+    margin-left: 10px;
+    padding-left: 10px;
+    color: #555;
+}
+a { color: #007bff; text-decoration: none; }
+a:hover { text-decoration: underline; }
 """
 DARK_THEME = """
-QWidget { background-color:rgb(0, 0, 0); color: #f5f5f5; }
-QTextEdit, QLineEdit { background-color:rgb(0, 0, 0); color: #f5f5f5; }
-QPushButton { background-color: #444; color: #f5f5f5; border-radius: 5px; padding: 5px; }
-QPushButton:hover { background-color: #555; }
+QWidget { background-color: rgb(40, 40, 40); color: #f5f5f5; }
+QTextBrowser, QLineEdit {
+    background-color: rgb(30, 30, 30);
+    color: #f5f5f5;
+    border: 1px solid rgb(50, 50, 50);
+    border-radius: 5px;
+    padding: 5px;
+}
+QPushButton {
+    background-color: rgb(60, 60, 60);
+    color: #f5f5f5;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid rgb(70, 70, 70);
+}
+QPushButton:hover { background-color: rgb(80, 80, 80); }
+QTextBrowser {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #a9f;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+p {
+    margin-bottom: 0.5em;
+    line-height: 1.5;
+}
+ul, ol {
+    margin-left: 1.5em;
+    margin-bottom: 0.5em;
+}
+li {
+    margin-bottom: 0.2em;
+}
+code {
+    background-color: rgb(50, 50, 50);
+    color: #da5;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+pre {
+    background-color: rgb(30, 30, 30);
+    border: 1px solid rgb(50, 50, 50);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap; /* Allows text to wrap */
+}
+pre code {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+blockquote {
+    border-left: 3px solid #a9f;
+    margin-left: 10px;
+    padding-left: 10px;
+    color: #ccc;
+}
+a { color: #8af; text-decoration: none; }
+a:hover { text-decoration: underline; }
 """
 
 def load_settings():
@@ -101,7 +223,7 @@ class JarvisGUI(QWidget):
 
     def init_ui(self):
         self.setWindowTitle('Jarvis - Personal AI Assistant')
-        self.setGeometry(100, 100, 600, 400)
+        self.setGeometry(100, 100, 800, 600)
 
         layout = QVBoxLayout()
 
@@ -204,6 +326,8 @@ class JarvisGUI(QWidget):
         cursor.select(cursor.BlockUnderCursor)
         cursor.removeSelectedText()
         self.conversation.setTextCursor(cursor)
+        # Add a newline to ensure separation
+        self.conversation.append("")
 
     def handle_send(self):
         user_text = self.input_box.text().strip()
@@ -230,22 +354,22 @@ class JarvisGUI(QWidget):
                             self.assistant_message_signal.emit(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}', False)
                             if self.settings.get('voice', True):
                                 speak_text(f"Found {len(results)} file{'s' if len(results) > 1 else ''}.")
-                            self.save_conversation()
                         else:
                             response = f"No files found matching '{query}'."
                             self.remove_loading_signal.emit()
                             self.assistant_message_signal.emit(f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b> {response}', False)
                             if self.settings.get('voice', True):
                                 speak_text(response)
-                            self.save_conversation()
                     except Exception as e:
                         self.remove_loading_signal.emit()
                         self.error_signal.emit(f"File search error: {e}")
                 threading.Thread(target=file_search_thread, daemon=True).start()
                 return
             # In-app web search and summarization (explicit)
-            elif user_text_lower.startswith("search for "):
-                query = user_text[11:].strip()
+            elif user_text_lower.startswith(("search for ", "search ")):
+                query_match = re.match(r"search (for )?(.+)", user_text_lower)
+                query = query_match.group(2).strip()
+
                 self.show_loading()
                 def web_search_thread():
                     try:
@@ -343,52 +467,58 @@ class JarvisGUI(QWidget):
                 self.show_loading()
                 def llm_thread():
                     try:
-                        print('[DEBUG] Sending to LLM:', user_text)
-                        response = get_llm_response(user_text)
-                        print('[DEBUG] LLM response:', response)
+                        response = get_llm_response(user_text, self.history)
                         self.remove_loading_signal.emit()
-                        if not response or not response.strip():
-                            self.error_signal.emit('No response from LLM.')
-                        else:
-                            self.assistant_message_signal.emit(response, True)
-                            if self.settings.get('voice', True):
-                                speak_text(response)
-                            self.save_conversation()
+                        self.assistant_message_signal.emit(
+                            f'<b>{self.settings.get("assistant_name", "Jarvis")}:</b>\n{response}', 
+                            True
+                        )
+                        if self.settings.get('voice', True):
+                            speak_text(clean_markdown_for_tts(response))
                     except Exception as e:
                         self.remove_loading_signal.emit()
-                        print('[DEBUG] LLM exception:', e)
                         self.error_signal.emit(f"LLM error: {e}")
                 threading.Thread(target=llm_thread, daemon=True).start()
-            self.save_conversation()
         except Exception as e:
             self.remove_loading()
             self.show_error(f"Unexpected error: {e}")
 
     def append_conversation(self, text, is_markdown=False):
         if is_markdown:
-            html = markdown.markdown(text, extensions=['extra'])
+            # Split sender from message
+            parts = text.split('\n', 1)
+            sender = parts[0]
+            message = parts[1] if len(parts) > 1 else ''
+            
+            # Add sender to view and history
+            self.conversation.append(sender)
+            self.history.append(sender)
+
+            # Convert markdown and add message to view and history
+            html = markdown.markdown(message, extensions=['fenced_code', 'tables', 'sane_lists'])
             self.conversation.append(html)
             self.history.append(html)
         else:
             self.conversation.append(text)
             self.history.append(text)
-
-    def save_conversation(self):
+        
         save_history(self.history)
 
     def load_conversation(self):
-        for line in self.history:
-            self.conversation.append(line)
+        self.conversation.clear()
+        # self.history is already loaded in __init__
+        for item in self.history:
+            self.conversation.append(item)
 
     def clear_conversation(self):
-        self.conversation.clear()
         self.history = []
-        self.save_conversation()
+        self.conversation.clear()
+        save_history(self.history)
 
     def handle_file_link(self, url: QUrl):
-        path = url.toLocalFile()
-        if os.path.exists(path):
-            os.startfile(path)
+        file_path = url.toLocalFile()
+        if os.path.exists(file_path):
+            os.startfile(file_path)
 
     def handle_speak(self):
         def stt_thread():
