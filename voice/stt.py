@@ -6,6 +6,7 @@ import sounddevice as sd
 import queue
 import json
 from config import VOSK_MODEL_PATH
+import os
 
 q = queue.Queue()
 
@@ -14,7 +15,15 @@ def callback(indata, frames, time, status):
     q.put(bytes(indata))
 
 def listen_and_transcribe():
-    model = vosk.Model(VOSK_MODEL_PATH)
+    if not os.path.exists(VOSK_MODEL_PATH):
+        print(f"Vosk model not found at {VOSK_MODEL_PATH}. Please download it from https://alphacephei.com/vosk/models and place it in the correct directory.")
+        return None
+    try:
+        model = vosk.Model(VOSK_MODEL_PATH)
+    except Exception as e:
+        print(f"Failed to load Vosk model: {e}")
+        return None
+
     samplerate = 16000
     device = None  # Use default input device
     rec = vosk.KaldiRecognizer(model, samplerate)

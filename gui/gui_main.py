@@ -374,19 +374,18 @@ class JarvisGUI(QWidget):
                 def web_search_thread():
                     try:
                         result = search_and_summarize(query)
-                        summary = result['summary']
-                        results = result['results']
-                        html = f'<b>{self.settings.get("assistant_name", "Jarvis")} (Web):</b> {summary}<br><br>'
-                        for r in results:
-                            html += f'<b><a href="{r["url"]}">{r["title"]}</a></b><br>'
-                            html += f'<span style="color:#888">{r["url"]}</span><br>'
-                            if r["snippet"]:
-                                html += f'<i>{r["snippet"]}</i><br>'
-                            html += '<hr>'
+                        # The 'summary' key now contains the full markdown content
+                        markdown_response = result['summary']
                         self.remove_loading_signal.emit()
-                        self.assistant_message_signal.emit(html, False)
+                        # Pass the full markdown response to be rendered
+                        self.assistant_message_signal.emit(
+                            f'<b>{self.settings.get("assistant_name", "Jarvis")} (Web):</b>\n{markdown_response}', 
+                            True
+                        )
+                        # For TTS, we need a plain text summary.
+                        # The clean_markdown_for_tts function handles removal of links, etc.
                         if self.settings.get('voice', True):
-                            speak_text(summary[:400])
+                            speak_text(markdown_response[:1000]) # Speak the first 1000 chars of the summary
                     except Exception as e:
                         self.remove_loading_signal.emit()
                         self.error_signal.emit(f"Web search error: {e}")
@@ -398,19 +397,14 @@ class JarvisGUI(QWidget):
                 def web_search_thread():
                     try:
                         result = search_and_summarize(user_text)
-                        summary = result['summary']
-                        results = result['results']
-                        html = f'<b>{self.settings.get("assistant_name", "Jarvis")} (Web):</b> {summary}<br><br>'
-                        for r in results:
-                            html += f'<b><a href="{r["url"]}">{r["title"]}</a></b><br>'
-                            html += f'<span style="color:#888">{r["url"]}</span><br>'
-                            if r["snippet"]:
-                                html += f'<i>{r["snippet"]}</i><br>'
-                            html += '<hr>'
+                        markdown_response = result['summary']
                         self.remove_loading_signal.emit()
-                        self.assistant_message_signal.emit(html, False)
+                        self.assistant_message_signal.emit(
+                            f'<b>{self.settings.get("assistant_name", "Jarvis")} (Web):</b>\n{markdown_response}',
+                            True
+                        )
                         if self.settings.get('voice', True):
-                            speak_text(summary[:400])
+                            speak_text(markdown_response[:1000]) # Speak the first 1000 chars of the summary
                     except Exception as e:
                         self.remove_loading_signal.emit()
                         self.error_signal.emit(f"Web search error: {e}")
